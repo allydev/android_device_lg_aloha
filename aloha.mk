@@ -9,6 +9,7 @@ PRODUCT_PACKAGES := \
 
 # aloha uses high-density artwork where available
 PRODUCT_LOCALES += hdpi
+#PRODUCT_LOCALES += en_US
    
 DEVICE_PACKAGE_OVERLAYS := device/lg/aloha/overlay 
 #DEVICE_PACKAGE_OVERLAYS := device/htc/sapphire/overlay   
@@ -18,7 +19,13 @@ PRODUCT_PROPERTY_OVERRIDES := \
    wifi.supplicant_scan_interval=20 \
    keyguard.no_require_sim=true \
     ro.com.android.dateformat=MM-dd-yyyy \
-    ro.com.android.dataroaming=true 
+    ro.com.android.dataroaming=true \
+    media.stagefright.enable-player=true \
+    media.stagefright.enable-meta=true \
+    media.stagefright.enable-scan=true \
+    media.stagefright.enable-http=false \
+    ro.config.sync=yes
+    
 
 
 PRODUCT_COPY_FILES := \
@@ -106,7 +113,31 @@ PRODUCT_COPY_FILES := \
 	device/lg/aloha/proprietary/lib/libloc-rpc.so:obj/lib/libloc-rpc.so \
 	device/lg/aloha/proprietary/lib/libloc-rpc.so:system/lib/libloc-rpc.so \
 	device/lg/aloha/h2w_headset.kl:system/usr/keylayout/h2w_headset.kl \
-	device/lg/aloha/proprietary/wl/rtecdc_sta.bin:system/etc/wl/rtecdc_sta.bin 
+	device/lg/aloha/proprietary/wl/rtecdc_sta.bin:system/etc/wl/rtecdc_sta.bin \
+	device/lg/aloha/proprietary/google_generic_update.txt:system/etc/updatecmds/google_generic_update.txt
+	
+#codecs
+PRODUCT_COPY_FILES += \
+	device/lg/aloha/proprietary/codecs/libOmxAacDec.so:system/lib/libOmxAacDec.so \
+	device/lg/aloha/proprietary/codecs/libOmxAacEnc.so:system/lib/libOmxAacEnc.so \
+	device/lg/aloha/proprietary/codecs/libOmxAmrDec.so:system/lib/libOmxAmrDec.so \
+	device/lg/aloha/proprietary/codecs/libOmxAmrEnc.so:system/lib/libOmxAmrEnc.so \
+	device/lg/aloha/proprietary/codecs/libOmxAmrRtpDec.so:system/lib/libOmxAmrRtpDec.so \
+	device/lg/aloha/proprietary/codecs/libOmxAmrwbDec.so:system/lib/libOmxAmrwbDec.so \
+	device/lg/aloha/proprietary/codecs/libOmxEvrcDec.so:system/lib/libOmxEvrcDec.so \
+	device/lg/aloha/proprietary/codecs/libOmxEvrcEnc.so:system/lib/libOmxEvrcEnc.so \
+	device/lg/aloha/proprietary/codecs/libOmxH264Dec.so:system/lib/libOmxH264Dec.so \
+	device/lg/aloha/proprietary/codecs/libOmxMpeg4Dec.so:system/lib/libOmxMpeg4Dec.so \
+	device/lg/aloha/proprietary/codecs/libOmxQcelp13Enc.so:system/lib/libOmxQcelp13Enc.so \
+	device/lg/aloha/proprietary/codecs/libOmxQcelpDec.so:system/lib/libOmxQcelpDec.so \
+	device/lg/aloha/proprietary/codecs/libOmxVidEnc.so:system/lib/libOmxVidEnc.so \
+	device/lg/aloha/proprietary/codecs/libOmxWmaDec.so:system/lib/libOmxWmaDec.so \
+	device/lg/aloha/proprietary/codecs/libOmxWmvDec.so:system/lib/libOmxWmvDec.so \
+	device/lg/aloha/proprietary/codecs/libOmxMp3Dec.so:system/lib/libOmxMp3Dec.so \
+	device/lg/aloha/proprietary/codecs/libomx_wmadec_sharedlibrary.so:system/lib/libomx_wmadec_sharedlibrary.so \
+	device/lg/aloha/proprietary/codecs/libomx_wmvdec_sharedlibrary.so:system/lib/libomx_wmvdec_sharedlibrary.so \
+	device/lg/aloha/proprietary/codecs/libmm-abl.so:system/lib/libmm-abl.so \
+	device/lg/aloha/proprietary/codecs/libmm-adspsvc.so:system/lib/libmm-adspsvc.so 
 
 
 #frameworks/base/data/etc/android.hardware.bluetooth.xml:system/etc/permissions/android.hardware.bluetooth.xml \
@@ -178,6 +209,9 @@ include frameworks/base/data/sounds/OriginalAudio.mk
 $(call inherit-product, build/target/product/generic.mk)
 
 # Overrides
-PRODUCT_BRAND := lg
+PRODUCT_BRAND := verizon
 PRODUCT_NAME := aloha
 PRODUCT_DEVICE := aloha
+PRODUCT_MODEL := Ally
+PRODUCT_MANUFACTURER := LGE
+

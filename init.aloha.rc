@@ -95,11 +95,17 @@ on boot
 	chmod 0660 /dev/system_bus_freq
 	chown system system /dev/cpu_dma_latency
 	chmod 0660 /dev/cpu_dma_latency
-## WIFI
-	chown system misc /data/misc/wifi
-	chmod 0771 /data/misc/wifi
-	mkdir /data/misc/wifi/sockets 0777 root root
+## WIFI  #changed gnm
+	#chown system misc /data/misc/wifi
+	#chmod 0771 /data/misc/wifi
+	#mkdir /data/misc/wifi/sockets 0777 root root
+	#mkdir /data/disk 0777 system system
+   	
+	#mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    	#setprop wifi.supplicant_scan_interval 20
+    	#setprop wifi.interface wlan0
 	mkdir /data/disk 0777 system system
+
 
 ## VPN
 	chown system system /data/misc/vpn
@@ -119,7 +125,7 @@ on property:init.svc.hcid=running
 	write /sys/devices/virtual/bluetooth/hci0/idle_timeout 7000
 
 # LG_FW_AUDIO_BROADCOM_BT , not used below lines
-#service hci_qcomm_init /system/bin/log -t qcom-bluetooth -p i "hci_qcomm_init service requested"
+# service hci_qcomm_init /system/bin/log -t qcom-bluetooth -p i "hci_qcomm_init service requested"
 #    user bluetooth
 #    group bluetooth net_bt_admin
 #    disabled
@@ -129,27 +135,29 @@ on property:init.svc.hcid=running
 # Make sure we startup btld before bluetoothd
 # Set target address to emulator host loopback IF
 # Limit baudrate to 460800 to ensure reliable uart operation
-service btld /system/bin/logwrapper /system/bin/btld -pf /system/bin/BCM4329B1_002.002.023.0313.0333.hcd -hb 4000000 -lpm 1
-    user root			
-    group bluetooth net_bt_admin			
-    disabled			
-    oneshot			
-				
-service bluetoothd /system/bin/bluetoothd -n			
-    socket bluetooth stream 660 bluetooth bluetooth			
-    socket dbus_bluetooth stream 660 bluetooth bluetooth			
-    # init.rc does not yet support applying capabilities, so run as root and			
-    # let bluetoothd drop uid to bluetooth with the right linux capabilities			
-    group bluetooth net_bt_admin misc			
-    disabled			
 
-#service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
+## btld & bluetoothd disabled for debugging BT GNM
+#service btld /system/bin/logwrapper /system/bin/btld -pf /system/bin/BCM4329B1_002.002.023.0313.0333.hcd -hb 4000000 -lpm 1
+#    user root			
+#    group bluetooth net_bt_admin			
+#    disabled			
+#    oneshot			
+				
+#service bluetoothd /system/bin/bluetoothd -n			
+#    socket bluetooth stream 660 bluetooth bluetooth			
+#    socket dbus_bluetooth stream 660 bluetooth bluetooth			
+#    # init.rc does not yet support applying capabilities, so run as root and			
+#    # let bluetoothd drop uid to bluetooth with the right linux capabilities			
+#    group bluetooth net_bt_admin misc			
+#    disabled			
+
+# service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
 #    user bluetooth
 #    group qcom_oncrpc bluetooth net_bt_admin
 #    disabled
 #    oneshot
 
-#service hcid /system/bin/hcid -s -n -f /etc/bluez/hcid.conf
+# service hcid /system/bin/hcid -s -n -f /etc/bluez/hcid.conf
 #    socket bluetooth stream 660 bluetooth bluetooth
 #    socket dbus_bluetooth stream 660 bluetooth bluetooth
 #    # init.rc does not yet support applying capabilities, so run as root and
@@ -157,22 +165,24 @@ service bluetoothd /system/bin/bluetoothd -n
 #   group bluetooth net_bt_admin misc
 #    disabled
 
-#service hfag /system/bin/sdptool add --channel=10 HFAG
+# service hfag /system/bin/sdptool add --channel=10 HFAG
 #    user bluetooth
 #    group bluetooth net_bt_admin
 #    disabled
 #    oneshot
 
-#service hsag /system/bin/sdptool add --channel=11 HSAG
+# service hsag /system/bin/sdptool add --channel=11 HSAG
 #    user bluetooth
 #    group bluetooth net_bt_admin
 #    disabled
 #    oneshot
 # --- BRCM ---
 
-service cnd /system/bin/cnd
-    socket cnd stream 660 root radio
-    socket cne stream 660 root radio
+#Disabled for debugging GNM
+# Keeps Pid Exiting to do find fix
+#service cnd /system/bin/cnd
+#    socket cnd stream 660 root radio
+#    socket cne stream 660 root radio
 
 ## WIFI
 service wpa_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant -Dwext -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf #-dd
@@ -186,25 +196,30 @@ service dhcpcd /system/bin/dhcpcd -B wlan0
 on property:init.svc.wpa_supplicant=stopped
 	stop dhcpcd
 
+#Disabled for debugging GNM
 service qmuxd /system/bin/qmuxd 
 
-#service keypress /system/bin/handset-keypress
+service keypress /system/bin/handset-keypress
 
 ## USB
 #service port-bridge /system/bin/port-bridge /dev/smd0 /dev/ttyGS0 
 service port-bridge /system/bin/port-bridge /dev/smd0 /dev/ttyHSUSB0
 
+#Disabled for debugging GNM
 service akmd2 /system/bin/akmd2
 
+#Disabled for debugging GNM
 service dhcp-service /system/bin/netcfg eth0 dhcp
 	oneshot
 
+# commented out for debugging GNM restore in release
 # /* LGE_BootTime [taesu84.kim@lge.com] 2010-03-17, LG_Decrease_BootTime */
 service qcom-post-boot /system/bin/sh /init.qcom.post_boot.sh
 	user root
 	disabled
 	oneshot
 
+Disabled for Debugging GNM
 on property:dev.bootcomplete=1
 	stop dhcp-service
 	start dhcp-service
@@ -216,19 +231,31 @@ service bugreport /system/bin/logwrapper /system/bin/dumpstate -d -v -o /sdcard/
 	oneshot
 	keycodes 42 139
 
+# lge_erc_rpc is not included GNM
 ## LGE_CHANGE_S [jihoon.lee@lge.com] 2010-02-03, LG_FW_ERS 
 ##if defined (CONFIG_MACH_MSM7X27_ALOHAV) || defined (LG_FW_ERS)
 #BEGIN 0003856 sh.kwon@lge.com 2010-01-21
 #ADD 0003856: [ERS] change policy ers rpc daemon runing if build type is user, eng
-service lge_ers_rpcd /system/bin/lge_ers_rpcd
-	oneshot
-on property:ro.build.type=userdebug
-	stop lge_ers_rpcd
-    start lge_ers_rpcd
-on property:ro.build.type=eng
-	stop lge_ers_rpcd
-    start lge_ers_rpcd
+#service lge_ers_rpcd /system/bin/lge_ers_rpcd
+#	oneshot
+#on property:ro.build.type=userdebug
+#	stop lge_ers_rpcd
+#    start lge_ers_rpcd
+#on property:ro.build.type=eng
+#	stop lge_ers_rpcd
+#    start lge_ers_rpcd
 ##endif /*LG_FW_ERS*/
 #END 0003290 sh.kwon@lge.com 2010-01-21
 ## LGE_CHANGE_E [jihoon.lee@lge.com] 2010-02-03, LG_FW_ERS 
+
+service tsdown  /system/bin/tsdown
+    user root
+    group root
+    oneshot
+
+# GNM this makes it work finally 4000000 doesnt work
+service hciattach /system/bin/brcm_patchram_plus --enable_hci --baudrate 3000000 --patchram /system/bin/BCM4329B1_002.002.023.0313.0333.hcd /dev/ttyHS0
+    user bluetooth
+    group bluetooth net_bt_admin
+    disabled
 
